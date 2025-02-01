@@ -152,7 +152,6 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
-
 # Cython debug symbols
 cython_debug/
 
@@ -172,5 +171,8 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+#
+./bin/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
