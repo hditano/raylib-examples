@@ -1,17 +1,27 @@
 import pyray as pr
 import raylib as rl
-from os.path import join
+import time
 
 
-class Player:
-    def __init__(self, pos, radius) -> None:
+class Sprite:
+    def __init__(self, pos, speed) -> None:
         self.pos = pos
+        self.speed = speed
+        self.direction = pr.Vector2(0, 0)
+
+    def move(self, dt):
+        self.pos.x += self.direction.x * self.speed * dt
+        self.pos.y += self.direction.y * self.speed * dt
+
+
+class Player(Sprite):
+    def __init__(self, pos, radius) -> None:
+        super().__init__(pos, 400)
         self.radius = radius
         self.color = pr.WHITE
         self.direction = pr.Vector2()
-        self.speed = 400
 
-    def update(self):
+    def update(self, dt):
         self.direction.x = int(pr.is_key_down(rl.KEY_RIGHT)) - int(
             pr.is_key_down(rl.KEY_LEFT)
         )
@@ -19,22 +29,21 @@ class Player:
             pr.is_key_down(rl.KEY_UP)
         )
 
-        dt = pr.get_frame_time()
-        self.pos.x += self.direction.x * self.speed * dt
-        self.pos.y += self.direction.y * self.speed * dt
+        self.move(dt)
 
     def draw(self):
         pr.draw_circle_v(self.pos, self.radius, self.color)
 
 
-class Block:
+class Block(Sprite):
     def __init__(self, pos) -> None:
-        self.pos = pos
+        super().__init__(pos, 200)
         self.radius = 20
         self.color = pr.MAGENTA
+        self.direction = pr.Vector2(1, 0)
 
-    def update(self):
-        pass
+    def update(self, dt):
+        self.move(dt)
 
     def draw(self):
         pr.draw_circle_v(self.pos, self.radius, self.color)
@@ -54,17 +63,23 @@ class LoadImage:
 
 pr.init_window(1920, 1080, "OOP")
 player = Player(pr.Vector2(500, 200), 50)
-block = Block((400, 400))
-image = LoadImage("./assets/lv-yov.png")
+block = Block(pr.Vector2(600, 800))
+# image = LoadImage("./assets/lv-yov.png")
 
 while not pr.window_should_close():
     pr.begin_drawing()
     pr.clear_background(pr.BLACK)
-    player.update()
+
+    dt = pr.get_frame_time()
+
+    player.update(dt)
     player.draw()
+
+    block.update(dt)
     block.draw()
-    image.draw()
+
+    # image.draw()
     pr.end_drawing()
 
-image.unload()
+# image.unload()
 pr.close_window()
